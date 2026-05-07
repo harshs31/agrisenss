@@ -21,10 +21,9 @@ from sklearn.preprocessing import LabelEncoder
 from PIL import Image
 # display image using streamlit
 # width is used to set the width of an image
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-img_path = os.path.join(BASE_DIR, "c0105e9a8f48dcbbca717d01fbd0efdcbd12c80b5d152ee2d2bffd4d.png")
-
+img_path = os.path.join(BASE_DIR, "crop.png")
 img = Image.open(img_path)
 
 df= pd.read_csv('Crop_recommendation.csv')

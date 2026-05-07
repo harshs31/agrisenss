@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Calendar & Planting Guide for Indian States</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #4caf50;
+            --light-green: #c8e6c9;
+            --harvest-color: #ffd54f;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            
+           
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        select {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        
+        .crop-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+        }
+        
+        .info-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 16px;
+        }
+        
+        .info-card p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .timeline {
+            margin: 40px 0;
+        }
+        
+        .timeline h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-line {
+            height: 4px;
+            background-color: var(--primary-color);
+            position: relative;
+        }
+        
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            width: 100%;
+            top: -8px;
+        }
+        
+        .timeline-point {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+        
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .timeline-label {
+            text-align: center;
+            font-size: 14px;
+            max-width: 100px;
+        }
+        
+        .timeline-date {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .calendar {
+            margin: 40px 0;
+        }
+        
+        .calendar-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+        
+        .calendar-header h2 {
+            margin: 0;
+        }
+        
+        .calendar-grid {
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        
+        .calendar-months {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .calendar-month {
+            text-align: center;
+            padding: 10px 0;
+            border-right: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .calendar-month:last-child {
+            border-right: none;
+        }
+        
+        .calendar-row {
+            display: grid;
+            grid-template-columns: 100px repeat(12, 1fr);
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .calendar-row:last-child {
+            border-bottom: none;
+        }
+        
+        .calendar-row-label {
+            padding: 15px 10px;
+            background-color: #f9f9f9;
+            font-weight: bold;
+            border-right: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        
+        .calendar-cell {
+            height: 40px;
+            border-right: 1px solid #ddd;
+        }
+        
+        .calendar-cell:last-child {
+            border-right: none;
+        }
+        
+        .calendar-cell.sowing {
+            background-color: var(--light-green);
+        }
+        
+        .calendar-cell.growing {
+            background-color: var(--secondary-color);
+        }
+        
+        .calendar-cell.harvesting {
+            background-color: var(--harvest-color);
+        }
+        
+        .calendar-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+        }
+        
+        .legend-color.sowing {
+            background-color: var(--light-green);
+        }
+        
+        .legend-color.growing {
+            background-color: var(--secondary-color);
+        }
+        
+        .legend-color.harvesting {
+            background-color: var(--harvest-color);
+        }
+        
+        .tips {
+            background-color: var(--light-green);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .tips h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .tips-icon {
+            font-size: 24px;
+        }
+        
+        .tips ul {
+            padding-left: 20px;
+        }
+        
+        .tips li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .calendar-months {
+                display: none;
+            }
+            
+            .calendar-row {
+                grid-template-columns: 100px 1fr;
+                margin-bottom: 20px;
+            }
+            
+            .calendar-cell {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                padding: 10px;
+                height: auto;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .calendar-month-label {
+                font-weight: bold;
+                margin-right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Crop Calendar & Planting Guide </h1>
+        </header>
+        
+        <div class="controls">
+            <select id="stateSelect">
+                <option value="">Select a State</option>
+                <option value="maharashtra">Maharashtra</option>
+                <option value="punjab">Punjab</option>
+                <option value="karnataka">Karnataka</option>
+                <option value="tamil-nadu">Tamil Nadu</option>
+                <option value="west-bengal">West Bengal</option>
+                <option value="uttar-pradesh">Uttar Pradesh</option>
+                <option value="gujarat">Gujarat</option>
+                <option value="andhra-pradesh">Andhra Pradesh</option>
+            </select>
+            
+            <select id="cropSelect">
+                <option value="">Select a Crop</option>
+                <!-- Crops will be populated based on state selection -->
+            </select>
+        </div>
+        
+        <div id="cropDetails">
+            <div class="loading">Please select a state and crop to view details</div>
+        </div>
+        
+        <footer>
+            © 2025 Crop Calendar & Planting Guide | Data sourced from agricultural departments
+        </footer>
+    </div>
+
+    <script>
+        // Database of crop information by state
+        const cropData = {
+            "maharashtra": {
+                "rice": {
+                    "name": "Rice (Paddy)",
+                    "sowingWindow": "June 15 to July 30",
+                    "transplantingWindow": "July 15 to August 15",
+                    "harvestWindow": "October 20 to November 30",
+                    "daysToMaturity": "110-150 days",
+                    "averageYield": "3.5-4.5 tonnes per hectare",
+                    "plantSpacing": "20 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 15",
+                        "growing": "July 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "October 20"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7],
+                        "growing": [7, 8, 9, 10],
+                        "harvesting": [10, 11]
+                    },
+                    "tips": [
+                        "Apply organic manure or compost 3-4 weeks before sowing",
+                        "Ensure adequate irrigation during the growing period, particularly during panicle formation",
+                        "Practice SRI (System of Rice Intensification) for better yield",
+                        "Monitor for pests like stem borer and leaf folder",
+                        "Drain fields 10-15 days before harvesting for uniform ripening"
+                    ]
+                },
+                "cotton": {
+                    "name": "Cotton",
+                    "sowingWindow": "May 15 to June 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "October 15 to January 15",
+                    "daysToMaturity": "150-180 days",
+                    "averageYield": "15-20 quintals per hectare",
+                    "plantSpacing": "60 × 30 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "May 15",
+                        "growing": "June 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "October 15"
+                    },
+                    "calendar": {
+                        "sowing": [5, 6],
+                        "growing": [6, 7, 8, 9],
+                        "harvesting": [10, 11, 12, 1]
+                    },
+                    "tips": [
+                        "Perform soil testing before sowing",
+                        "Use Bt cotton varieties resistant to bollworm",
+                        "Apply neem-based pesticides for organic pest management",
+                        "Maintain optimal moisture - avoid water logging",
+                        "Harvest in multiple pickings as bolls mature at different times"
+                    ]
+                },
+                "sugarcane": {
+                    "name": "Sugarcane",
+                    "sowingWindow": "October 15 to December 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "November 1 to March 31",
+                    "daysToMaturity": "300-365 days",
+                    "averageYield": "70-90 tonnes per hectare",
+                    "plantSpacing": "90 × 30 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "October 15",
+                        "growing": "December 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "November 1"
+                    },
+                    "calendar": {
+                        "sowing": [10, 11, 12],
+                        "growing": [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        "harvesting": [11, 12, 1, 2, 3]
+                    },
+                    "tips": [
+                        "Use disease-free setts for planting",
+                        "Practice trash mulching to conserve soil moisture",
+                        "Implement drip irrigation for water efficiency",
+                        "Apply balanced fertilizers including micronutrients",
+                        "Monitor for early signs of red rot disease"
+                    ]
+                }
+            },
+            "punjab": {
+                "wheat": {
+                    "name": "Wheat",
+                    "sowingWindow": "October 15 to November 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "April 1 to May 15",
+                    "daysToMaturity": "140-160 days",
+                    "averageYield": "4.5-5.5 tonnes per hectare",
+                    "plantSpacing": "20 × 5 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "October 15",
+                        "growing": "November 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "April 1"
+                    },
+                    "calendar": {
+                        "sowing": [10, 11],
+                        "growing": [11, 12, 1, 2, 3],
+                        "harvesting": [4, 5]
+                    },
+                    "tips": [
+                        "Apply pre-sowing irrigation (rauni) for better germination",
+                        "Use seed treatment with fungicides before sowing",
+                        "Maintain optimum seed rate of 100-125 kg/ha",
+                        "First irrigation should be applied 21-25 days after sowing",
+                        "Harvest when grain moisture content is below 12%"
+                    ]
+                },
+                "rice": {
+                    "name": "Rice (Paddy)",
+                    "sowingWindow": "May 15 to June 15",
+                    "transplantingWindow": "June 15 to July 15",
+                    "harvestWindow": "October 1 to November 15",
+                    "daysToMaturity": "120-150 days",
+                    "averageYield": "6-7.5 tonnes per hectare",
+                    "plantSpacing": "20 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "May 15",
+                        "growing": "June 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "October 1"
+                    },
+                    "calendar": {
+                        "sowing": [5, 6],
+                        "growing": [6, 7, 8, 9],
+                        "harvesting": [10, 11]
+                    },
+                    "tips": [
+                        "Prepare nursery with raised beds for good seedling development",
+                        "Apply 1/3 nitrogen, full phosphorus and potash as basal dose",
+                        "Maintain water level of 5 cm in the field",
+                        "Practice alternate wetting and drying method to save water",
+                        "Install pheromone traps for monitoring stem borer"
+                    ]
+                },
+                "maize": {
+                    "name": "Maize (Corn)",
+                    "sowingWindow": "June 1 to July 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "September 15 to October 31",
+                    "daysToMaturity": "85-110 days",
+                    "averageYield": "3.5-5 tonnes per hectare",
+                    "plantSpacing": "60 × 20 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 1",
+                        "growing": "July 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "September 15"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7],
+                        "growing": [7, 8, 9],
+                        "harvesting": [9, 10]
+                    },
+                    "tips": [
+                        "Use hybrid varieties for higher yield",
+                        "Treat seeds with Imidacloprid before sowing",
+                        "Apply zinc sulfate for better growth",
+                        "Maintain proper spacing to avoid overcrowding",
+                        "Harvest when the cob husks turn brown and dry"
+                    ]
+                }
+            },
+            "karnataka": {
+                "ragi": {
+                    "name": "Ragi (Finger Millet)",
+                    "sowingWindow": "June 15 to July 31",
+                    "transplantingWindow": "July 15 to August 15",
+                    "harvestWindow": "October 15 to November 30",
+                    "daysToMaturity": "90-120 days",
+                    "averageYield": "2-3 tonnes per hectare",
+                    "plantSpacing": "30 × 10 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 15",
+                        "growing": "July 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "October 15"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7],
+                        "growing": [7, 8, 9, 10],
+                        "harvesting": [10, 11]
+                    },
+                    "tips": [
+                        "Prepare nursery beds of 1m width and convenient length",
+                        "Use 5-6 kg seeds per hectare for transplanting method",
+                        "Apply FYM or compost at 7.5-10 tonnes per hectare",
+                        "First weeding should be done 15-20 days after transplanting",
+                        "Harvest when earheads turn brown"
+                    ]
+                },
+                "coffee": {
+                    "name": "Coffee",
+                    "sowingWindow": "December 1 to January 31",
+                    "transplantingWindow": "June 1 to August 31",
+                    "harvestWindow": "November 15 to February 28",
+                    "daysToMaturity": "3-4 years (first harvest)",
+                    "averageYield": "0.8-1 tonne per hectare (mature plantation)",
+                    "plantSpacing": "2 × 2 m (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "December 1",
+                        "growing": "June 1",
+                        "development": "Year 1-3",
+                        "preHarvest": "October",
+                        "harvest": "November 15"
+                    },
+                    "calendar": {
+                        "sowing": [12, 1],
+                        "growing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                        "harvesting": [11, 12, 1, 2]
+                    },
+                    "tips": [
+                        "Select shade trees appropriate for coffee plantation",
+                        "Maintain optimal shade levels (50-60%)",
+                        "Prune after harvest to maintain plant architecture",
+                        "Monitor for coffee berry borer and white stem borer",
+                        "Pick only red ripe cherries for better quality"
+                    ]
+                },
+                "arecanut": {
+                    "name": "Arecanut",
+                    "sowingWindow": "November 1 to December 31",
+                    "transplantingWindow": "June 1 to August 31",
+                    "harvestWindow": "Year-round (peak: January to April)",
+                    "daysToMaturity": "5-8 years (first harvest)",
+                    "averageYield": "1.5-2 tonnes per hectare (mature plantation)",
+                    "plantSpacing": "2.7 × 2.7 m (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "November 1",
+                        "growing": "June 1",
+                        "development": "Year 1-5",
+                        "preHarvest": "Year 5",
+                        "harvest": "January 1"
+                    },
+                    "calendar": {
+                        "sowing": [11, 12],
+                        "growing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                        "harvesting": [1, 2, 3, 4]
+                    },
+                    "tips": [
+                        "Select seedlings from high-yielding mother palms",
+                        "Apply basin irrigation during summer months",
+                        "Install drip irrigation system for water efficiency",
+                        "Intercrop with cocoa, banana, or vanilla for additional income",
+                        "Monitor for koleroga (fruit rot) during monsoon"
+                    ]
+                }
+            },
+            "tamil-nadu": {
+                "rice": {
+                    "name": "Rice (Paddy)",
+                    "sowingWindow": "June 1 to July 15 (Kuruvai) / Nov 1 to Dec 15 (Thaladi)",
+                    "transplantingWindow": "July 1 to Aug 15 (Kuruvai) / Dec 1 to Jan 15 (Thaladi)",
+                    "harvestWindow": "Oct 15 to Nov 30 (Kuruvai) / Apr 1 to May 15 (Thaladi)",
+                    "daysToMaturity": "115-135 days",
+                    "averageYield": "5-6.5 tonnes per hectare",
+                    "plantSpacing": "20 × 10 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 1 / Nov 1",
+                        "growing": "July 1 / Dec 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "Oct 15 / Apr 1"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7, 11, 12],
+                        "growing": [7, 8, 9, 10, 12, 1, 2, 3],
+                        "harvesting": [10, 11, 4, 5]
+                    },
+                    "tips": [
+                        "Choose varieties based on season (short duration for Kuruvai, medium for Thaladi)",
+                        "Adopt SRI method for water conservation",
+                        "Apply azolla as biofertilizer",
+                        "Monitor for brown planthopper during critical growth stages",
+                        "Install yellow sticky traps for pest monitoring"
+                    ]
+                },
+                "sugarcane": {
+                    "name": "Sugarcane",
+                    "sowingWindow": "December 15 to February 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "December 1 to April 30",
+                    "daysToMaturity": "300-360 days",
+                    "averageYield": "85-110 tonnes per hectare",
+                    "plantSpacing": "90 × 30 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "December 15",
+                        "growing": "February 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "December 1"
+                    },
+                    "calendar": {
+                        "sowing": [12, 1, 2],
+                        "growing": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        "harvesting": [12, 1, 2, 3, 4]
+                    },
+                    "tips": [
+                        "Use chip bud method for planting material efficiency",
+                        "Apply press mud compost for soil health improvement",
+                        "Implement sustainable sugarcane initiative (SSI) practices",
+                        "Use trash mulching to reduce weed growth",
+                        "Install light traps for early internode borer detection"
+                    ]
+                },
+                "turmeric": {
+                    "name": "Turmeric",
+                    "sowingWindow": "May 15 to June 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "January 15 to March 31",
+                    "daysToMaturity": "240-270 days",
+                    "averageYield": "20-25 tonnes per hectare",
+                    "plantSpacing": "45 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "May 15",
+                        "growing": "July 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "January 15"
+                    },
+                    "calendar": {
+                        "sowing": [5, 6],
+                        "growing": [6, 7, 8, 9, 10, 11, 12],
+                        "harvesting": [1, 2, 3]
+                    },
+                    "tips": [
+                        "Treat rhizomes with Trichoderma viride before planting",
+                        "Use raised beds in heavy rainfall areas",
+                        "Apply neem cake @ 200 kg/ha for pest management",
+                        "Mulch with organic materials after planting",
+                        "Harvest when leaves turn yellow and stems dry up"
+                    ]
+                }
+            },
+            "west-bengal": {
+                "rice": {
+                    "name": "Rice (Paddy)",
+                    "sowingWindow": "May 15 to July 15 (Kharif) / Nov 15 to Dec 31 (Boro)",
+                    "transplantingWindow": "June 15 to August 15 (Kharif) / Jan 1 to Feb 15 (Boro)",
+                    "harvestWindow": "September 15 to November 30 (Kharif) / April 15 to May 31 (Boro)",
+                    "daysToMaturity": "115-145 days",
+                    "averageYield": "4-5.5 tonnes per hectare",
+                    "plantSpacing": "20 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "May 15 / Nov 15",
+                        "growing": "June 15 / Jan 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "Sep 15 / Apr 15"
+                    },
+                    "calendar": {
+                        "sowing": [5, 6, 7, 11, 12],
+                        "growing": [6, 7, 8, 9, 12, 1, 2, 3, 4],
+                        "harvesting": [9, 10, 11, 4, 5]
+                    },
+                    "tips": [
+                        "Use stress-tolerant varieties in flood-prone areas",
+                        "Apply green manure before transplanting",
+                        "Adopt alternate wetting and drying technique",
+                        "Use blue sticky traps for insect monitoring",
+                        "Install bird perches for natural pest control"
+                    ]
+                },
+                "jute": {
+                    "name": "Jute",
+                    "sowingWindow": "March 15 to April 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "July 1 to August 31",
+                    "daysToMaturity": "100-120 days",
+                    "averageYield": "25-30 quintals per hectare (fiber)",
+                    "plantSpacing": "30 × 5-7 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "March 15",
+                        "growing": "April 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "July 1"
+                    },
+                    "calendar": {
+                        "sowing": [3, 4],
+                        "growing": [4, 5, 6],
+                        "harvesting": [7, 8]
+                    },
+                    "tips": [
+                        "Ensure proper seed rate (7-8 kg/ha)",
+                        "Thin seedlings 15-20 days after germination",
+                        "Perform timely weeding at 15 and 30 days after sowing",
+                        "Harvest during flowering stage for best fiber quality",
+                        "Submerge harvested plants in slow-moving water for retting"
+                    ]
+                },
+                "potato": {
+                    "name": "Potato",
+                    "sowingWindow": "November 10 to December 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "February 15 to March 31",
+                    "daysToMaturity": "80-100 days",
+                    "averageYield": "22-25 tonnes per hectare",
+                    "plantSpacing": "50 × 20 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "November 10",
+                        "growing": "December 10",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "February 15"
+                    },
+                    "calendar": {
+                        "sowing": [11, 12],
+                        "growing": [12, 1, 2],
+                        "harvesting": [2, 3]
+                    },
+                    "tips": [
+                        "Use certified seed potatoes to prevent diseases",
+                        "Cut large tubers into pieces with 2-3 eyes each",
+                        "Allow cut seed pieces to heal before planting",
+                        "Earth up soil around plants when they reach 15-20 cm height",
+                        "Harvest when leaves turn yellow and stems dry"
+                    ]
+                }
+            },
+            "uttar-pradesh": {
+                "wheat": {
+                    "name": "Wheat",
+                    "sowingWindow": "November 1 to December 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "March 15 to April 30",
+                    "daysToMaturity": "120-150 days",
+                    "averageYield": "4-5 tonnes per hectare",
+                    "plantSpacing": "22.5 × 5 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "November 1",
+                        "growing": "December 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "March 15"
+                    },
+                    "calendar": {
+                        "sowing": [11, 12],
+                        "growing": [12, 1, 2, 3],
+                        "harvesting": [3, 4]
+                    },
+                    "tips": [
+                        "Timely sowing is crucial for good yield",
+                        "Treat seeds with fungicides before sowing",
+                        "First irrigation at crown root initiation stage (21-25 days)",
+                        "Apply zinc sulfate in zinc-deficient soils",
+                        "Harvest when grain moisture content is around 12-14%"
+                    ]
+                },
+                "sugarcane": {
+                    "name": "Sugarcane",
+                    "sowingWindow": "February 15 to March 31",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "December 1 to March 31",
+                    "daysToMaturity": "300-330 days",
+                    "averageYield": "65-80 tonnes per hectare",
+                    "plantSpacing": "75 × 30 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "February 15",
+                        "growing": "April 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "December 1"
+                    },
+                    "calendar": {
+                        "sowing": [2, 3],
+                        "growing": [3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        "harvesting": [12, 1, 2, 3]
+                    },
+                    "tips": [
+                        "Select disease-free setts from 6-8 month old crop",
+                        "Treat setts with fungicides before planting",
+                        "Implement trench planting method for water conservation",
+                        "Apply trash mulching to reduce weed competition",
+                        "Practice propping to prevent lodging in tall varieties"
+                    ]
+                },
+                "mustard": {
+                    "name": "Mustard",
+                    "sowingWindow": "October 15 to November 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "February 15 to March 31",
+                    "daysToMaturity": "110-130 days",
+                    "averageYield": "1.2-1.8 tonnes per hectare",
+                    "plantSpacing": "45 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "October 15",
+                        "growing": "November 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "February 15"
+                    },
+                    "calendar": {
+                        "sowing": [10, 11],
+                        "growing": [11, 12, 1, 2],
+                        "harvesting": [2, 3]
+                    },
+                    "tips": [
+                        "Apply sulfur for better oil content",
+                        "Maintain optimal plant population through proper spacing",
+                        "First irrigation should be light and 20-25 days after sowing",
+                        "Monitor for aphid infestation during flowering stage",
+                        "Harvest when 75-80% of siliquae (pods) turn yellowish-brown"
+                    ]
+                }
+            },
+            "gujarat": {
+                "cotton": {
+                    "name": "Cotton",
+                    "sowingWindow": "June 1 to July 15",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "November 1 to February 28",
+                    "daysToMaturity": "150-180 days",
+                    "averageYield": "20-25 quintals per hectare",
+                    "plantSpacing": "90 × 60 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 1",
+                        "growing": "July 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "November 1"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7],
+                        "growing": [7, 8, 9, 10],
+                        "harvesting": [11, 12, 1, 2]
+                    },
+                    "tips": [
+                        "Practice deep plowing in summer to expose soil pests",
+                        "Use delinted seeds for uniform germination",
+                        "Apply neem-based products for integrated pest management",
+                        "Adopt high-density planting system for irrigated cotton",
+                        "Harvest in 3-4 pickings as bolls mature"
+                    ]
+                },
+                "groundnut": {
+                    "name": "Groundnut",
+                    "sowingWindow": "June 15 to July 15 (Kharif) / January 15 to February 15 (Summer)",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "October 15 to November 30 (Kharif) / May 1 to May 31 (Summer)",
+                    "daysToMaturity": "100-120 days",
+                    "averageYield": "1.5-2.5 tonnes per hectare",
+                    "plantSpacing": "30 × 10 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 15 / Jan 15",
+                        "growing": "July 15 / Feb 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "October 15 / May 1"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7, 1, 2],
+                        "growing": [7, 8, 9, 10, 2, 3, 4, 5],
+                        "harvesting": [10, 11, 5]
+                    },
+                    "tips": [
+                        "Treat seeds with Rhizobium culture for nitrogen fixation",
+                        "Apply gypsum at flowering stage for better pod development",
+                        "Provide light irrigation during pegging stage",
+                        "Monitor for leaf spot and rust diseases during rainy season",
+                        "Harvest when leaves turn yellow and inside pod shell shows dark coloration"
+                    ]
+                },
+                "cumin": {
+                    "name": "Cumin",
+                    "sowingWindow": "November 1 to November 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "February 15 to March 15",
+                    "daysToMaturity": "100-110 days",
+                    "averageYield": "0.5-0.8 tonnes per hectare",
+                    "plantSpacing": "30 × 10 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "November 1",
+                        "growing": "December 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "February 15"
+                    },
+                    "calendar": {
+                        "sowing": [11],
+                        "growing": [11, 12, 1, 2],
+                        "harvesting": [2, 3]
+                    },
+                    "tips": [
+                        "Use certified seeds to ensure quality",
+                        "Apply light but frequent irrigations",
+                        "Avoid irrigation during flowering stage",
+                        "Monitor for wilt and blight diseases",
+                        "Harvest when seeds turn brownish-gray in color"
+                    ]
+                }
+            },
+            "andhra-pradesh": {
+                "rice": {
+                    "name": "Rice (Paddy)",
+                    "sowingWindow": "June 1 to July 15 (Kharif) / December 1 to January 15 (Rabi)",
+                    "transplantingWindow": "July 1 to August 15 (Kharif) / January 1 to February 15 (Rabi)",
+                    "harvestWindow": "November 1 to December 15 (Kharif) / April 15 to May 31 (Rabi)",
+                    "daysToMaturity": "125-145 days",
+                    "averageYield": "5.5-6.5 tonnes per hectare",
+                    "plantSpacing": "20 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 1 / Dec 1",
+                        "growing": "July 1 / Jan 1",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "November 1 / April 15"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7, 12, 1],
+                        "growing": [7, 8, 9, 10, 1, 2, 3, 4],
+                        "harvesting": [11, 12, 4, 5]
+                    },
+                    "tips": [
+                        "Use drum seeding technique to reduce labor costs",
+                        "Apply Azospirillum and Phosphobacteria for nutrient management",
+                        "Incorporate green manures like Sesbania before transplanting",
+                        "Practice need-based pest management",
+                        "Maintain water level of 2-5 cm during critical stages"
+                    ]
+                },
+                "chili": {
+                    "name": "Chili",
+                    "sowingWindow": "June 15 to July 31 (Kharif) / November 15 to December 31 (Rabi)",
+                    "transplantingWindow": "July 15 to August 31 (Kharif) / December 15 to January 31 (Rabi)",
+                    "harvestWindow": "November 1 to February 28 (Kharif) / March 1 to June 30 (Rabi)",
+                    "daysToMaturity": "150-180 days",
+                    "averageYield": "15-25 quintals per hectare (dry)",
+                    "plantSpacing": "60 × 45 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "June 15 / Nov 15",
+                        "growing": "July 15 / Dec 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "November 1 / March 1"
+                    },
+                    "calendar": {
+                        "sowing": [6, 7, 11, 12],
+                        "growing": [7, 8, 9, 10, 12, 1, 2, 3, 4, 5],
+                        "harvesting": [11, 12, 1, 2, 3, 4, 5, 6]
+                    },
+                    "tips": [
+                        "Raise seedlings under shade net for better establishment",
+                        "Dip seedling roots in Pseudomonas fluorescens solution before transplanting",
+                        "Apply balanced NPK fertilizers in split doses",
+                        "Install yellow sticky traps for thrips and whitefly monitoring",
+                        "Harvest fruits at the right maturity stage for better quality"
+                    ]
+                },
+                "turmeric": {
+                    "name": "Turmeric",
+                    "sowingWindow": "May 15 to June 30",
+                    "transplantingWindow": "Not typically transplanted",
+                    "harvestWindow": "January 15 to March 31",
+                    "daysToMaturity": "210-240 days",
+                    "averageYield": "25-30 tonnes per hectare",
+                    "plantSpacing": "45 × 15 cm (row to row × plant to plant)",
+                    "timeline": {
+                        "planting": "May 15",
+                        "growing": "July 15",
+                        "development": "Mid-Season",
+                        "preHarvest": "Late-Season",
+                        "harvest": "January 15"
+                    },
+                    "calendar": {
+                        "sowing": [5, 6],
+                        "growing": [6, 7, 8, 9, 10, 11, 12],
+                        "harvesting": [1, 2, 3]
+                    },
+                    "tips": [
+                        "Use raised beds in areas with high rainfall",
+                        "Apply neem cake @ 200 kg/ha to control soil-borne pests",
+                        "Mulch with organic materials to conserve soil moisture",
+                        "Monitor for rhizome rot during monsoon season",
+                        "Harvest when leaves turn yellow and stems dry"
+                    ]
+                }
+            }
+        };
+
+        // Get DOM elements
+        const stateSelect = document.getElementById('stateSelect');
+        const cropSelect = document.getElementById('cropSelect');
+        const cropDetails = document.getElementById('cropDetails');
+
+        // Initialize crop selection based on state
+        stateSelect.addEventListener('change', function() {
+            const selectedState = this.value;
+            cropSelect.innerHTML = '<option value="">Select a Crop</option>';
+            
+            if (selectedState && cropData[selectedState]) {
+                const crops = Object.keys(cropData[selectedState]);
+                crops.forEach(crop => {
+                    const option = document.createElement('option');
+                    option.value = crop;
+                    option.textContent = cropData[selectedState][crop].name;
+                    cropSelect.appendChild(option);
+                });
+            }
+        });
+
+        // Display crop details when a crop is selected
+        cropSelect.addEventListener('change', function() {
+            const selectedState = stateSelect.value;
+            const selectedCrop = this.value;
+            
+            if (selectedState && selectedCrop && cropData[selectedState][selectedCrop]) {
+                displayCropDetails(selectedState, selectedCrop);
+            } else {
+                cropDetails.innerHTML = '<div class="loading">Please select a state and crop to view details</div>';
+            }
+        });
+
+        // Function to display crop details
+        function displayCropDetails(state, crop) {
+            const cropInfo = cropData[state][crop];
+            
+            // Format months for calendar
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            let html = `
+                <h2>${cropInfo.name} in ${state.charAt(0).toUpperCase() + state.slice(1)}</h2>
+                
+                <div class="crop-info">
+                    <div class="info-card">
+                        <h3>Sowing Window</h3>
+                        <p>${cropInfo.sowingWindow}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Transplanting Window</h3>
+                        <p>${cropInfo.transplantingWindow}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Harvest Window</h3>
+                        <p>${cropInfo.harvestWindow}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Days to Maturity</h3>
+                        <p>${cropInfo.daysToMaturity}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Average Yield</h3>
+                        <p>${cropInfo.averageYield}</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Plant Spacing</h3>
+                        <p>${cropInfo.plantSpacing}</p>
+                    </div>
+                </div>
+                
+                <div class="timeline">
+                    <h2>Growing Timeline</h2>
+                    <div class="timeline-container">
+                        <div class="timeline-points">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-point"></div>
+                            <div class="timeline-point"></div>
+                            <div class="timeline-point"></div>
+                            <div class="timeline-point"></div>
+                        </div>
+                        <div class="timeline-line"></div>
+                        <div class="timeline-labels">
+                            <div class="timeline-label">
+                                <div>Planting</div>
+                                <div class="timeline-date">${cropInfo.timeline.planting}</div>
+                            </div>
+                            <div class="timeline-label">
+                                <div>Growing</div>
+                                <div class="timeline-date">${cropInfo.timeline.growing}</div>
+                            </div>
+                            <div class="timeline-label">
+                                <div>Development</div>
+                                <div class="timeline-date">${cropInfo.timeline.development}</div>
+                            </div>
+                            <div class="timeline-label">
+                                <div>Pre-Harvest</div>
+                                <div class="timeline-date">${cropInfo.timeline.preHarvest}</div>
+                            </div>
+                            <div class="timeline-label">
+                                <div>Harvest</div>
+                                <div class="timeline-date">${cropInfo.timeline.harvest}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <h2>Annual Growing Calendar for ${cropInfo.name}</h2>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-months">
+                            ${monthNames.map(month => `<div class="calendar-month">${month}</div>`).join('')}
+                        </div>
+                        
+                        <div class="calendar-row">
+                            <div class="calendar-row-label">Sowing</div>
+                            ${generateCalendarCells(cropInfo.calendar.sowing, 'sowing')}
+                        </div>
+                        
+                        <div class="calendar-row">
+                            <div class="calendar-row-label">Growing</div>
+                            ${generateCalendarCells(cropInfo.calendar.growing, 'growing')}
+                        </div>
+                        
+                        <div class="calendar-row">
+                            <div class="calendar-row-label">Harvesting</div>
+                            ${generateCalendarCells(cropInfo.calendar.harvesting, 'harvesting')}
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-legend">
+                        <div class="legend-item">
+                            <div class="legend-color sowing"></div>
+                            <div>Sowing/Planting</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color growing"></div>
+                            <div>Growing Period</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color harvesting"></div>
+                            <div>Harvesting Period</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tips">
+                    <h2><span class="tips-icon">💡</span> Growing Tips for ${cropInfo.name}</h2>
+                    <ul>
+                        ${cropInfo.tips.map(tip => `<li>${tip}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            cropDetails.innerHTML = html;
+        }
+        
+        // Function to generate calendar cells
+        function generateCalendarCells(activeMonths, className) {
+            let cells = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                const isActive = activeMonths.includes(i);
+                cells += `<div class="calendar-cell ${isActive ? className : ''}"></div>`;
+            }
+            
+            return cells;
+        }
+    </script>
+</body>
+</html>

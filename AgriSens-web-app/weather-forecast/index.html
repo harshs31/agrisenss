@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geolocation Weather</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      padding: 2rem;
+      text-align: center;
+      max-width: 350px;
+      width: 100%;
+    }
+
+    .weather-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: #2196f3;
+    }
+
+    .temp {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    .desc {
+      text-transform: capitalize;
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
+
+    .info div {
+      text-align: center;
+    }
+
+    .info i {
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .error {
+      background-color: #ffcdd2;
+      padding: 1rem;
+      border-radius: 10px;
+      color: #b71c1c;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Current Weather</h1>
+  <div class="card" id="weather">
+    <p>Loading...</p>
+  </div>
+
+  <script>
+    const apiKey = '750a908aa6aa377ebe0921d34aac8707'; // Replace with your actual API key
+
+    function showWeather(lat, lon) {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          const icon = data.weather[0].icon;
+          const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
+          document.getElementById('weather').innerHTML = `
+            <img src="${iconUrl}" alt="Weather Icon" class="weather-icon" />
+            <p class="temp">${data.main.temp}&deg;C</p>
+            <p class="desc">${data.weather[0].description}</p>
+            <p><strong>${data.name}, ${data.sys.country}</strong></p>
+            <div class="info">
+              <div>
+                <i class="fas fa-tint"></i>
+                <p>${data.main.humidity}%</p>
+                <small>Humidity</small>
+              </div>
+              <div>
+                <i class="fas fa-wind"></i>
+                <p>${data.wind.speed} m/s</p>
+                <small>Wind</small>
+              </div>
+            </div>
+          `;
+        })
+        .catch(err => {
+          document.getElementById('weather').innerHTML = `<div class="error">Error: ${err.message}</div>`;
+        });
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        showWeather(latitude, longitude);
+      },
+      () => {
+        document.getElementById('weather').innerHTML = '<div class="error">Location access denied.</div>';
+      }
+    );
+  </script>
+</body>
+
+</html> 

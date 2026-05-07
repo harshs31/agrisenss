@@ -26,7 +26,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 img_path = os.path.join(BASE_DIR, "crop.png")
 img = Image.open(img_path)
 
-df= pd.read_csv('Crop_recommendation.csv')
+csv_path = os.path.join(BASE_DIR, "Crop_recommendation.csv")
+df = pd.read_csv(csv_path)
 
 #features = df[['temperature', 'humidity', 'ph', 'rainfall']]
 X = df[['N', 'P','K','temperature', 'humidity', 'ph', 'rainfall']]
